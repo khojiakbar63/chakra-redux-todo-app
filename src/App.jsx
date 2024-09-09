@@ -3,7 +3,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { addTodo, deleteTodo, toggleTodo } from "./redux/todo/index";
 import { useToast } from "@chakra-ui/react";
-
+const positions = [
+  'top',
+  'top-right',
+  'top-left',
+  'bottom',
+  'bottom-right',
+  'bottom-left',
+]
 import {
   Container,
   Card,
@@ -32,7 +39,13 @@ const App = () => {
   const addToast = useToast();
   const completeToast = useToast();
   const nicheToast = useToast();
+  function closeAll() {
+    delToast.closeAll();
+    addToast.closeAll();
+    completeToast.closeAll();
+    nicheToast.closeAll();
 
+  }
 
   const validTodo = () => {
     if (title.trim().length === 0 || body.trim().length === 0) {
@@ -59,6 +72,7 @@ const App = () => {
         status: "success",
         duration: 9000,
         isClosable: true,
+        position: positions[1],
       });
       setTitle("");
       setBody("");
@@ -66,6 +80,8 @@ const App = () => {
   };
 
   return (
+    <>
+     
     <Container maxW={1250}>
       <Card my={10}>
         <CardHeader>
@@ -90,17 +106,19 @@ const App = () => {
                 <Textarea
                   value={body}
                   onChange={(e) => {
-                    setBody(e.target.value)
-                    localStorage.setItem("body", e.target.value)
+                    setBody(e.target.value);
+                    localStorage.setItem("body", e.target.value);
                   }}
                   id="body"
                   placeholder="Enter description"
                 />
               </Box>
-              <Button onClick={()=> {
-              validTodo()
-              
-              }} colorScheme="teal">
+              <Button
+                onClick={() => {
+                  validTodo();
+                }}
+                colorScheme="teal"
+              >
                 Add Task
               </Button>
             </Stack>
@@ -142,6 +160,7 @@ const App = () => {
                             status: "loading",
                             duration: 1000,
                             isClosable: true,
+                            position: positions[4],
                           });
                         }}
                         isChecked={todo.completed}
@@ -151,13 +170,14 @@ const App = () => {
                         colorScheme="red"
                         onClick={() => {
                           dispatch(deleteTodo(todo.id));
-                          localStorage.removeItem("title")
+                          localStorage.removeItem("title");
                           delToast({
                             title: "Deleted",
                             description: `You have deleted "${todo.title}" todo.`,
                             status: "warning",
                             duration: 9000,
                             isClosable: true,
+                            position: positions[4],
                           });
                         }}
                       >
@@ -171,6 +191,10 @@ const App = () => {
         </CardBody>
       </Card>
     </Container>
+    <Button colorScheme="red" onClick={closeAll} type="button" variant="outline">
+        Close all toasts
+      </Button>
+    </>
   );
 };
 
